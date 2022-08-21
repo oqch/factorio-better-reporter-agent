@@ -1,0 +1,6 @@
+.vscode
+.github
+.dependabot
+target
+*.md
+e

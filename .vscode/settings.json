@@ -1,0 +1,25 @@
+{
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/target": true
+  },
+  "editor.formatOnSave": true,
+  "files.autoSave": "onFocusChange",
+  "files.eol": "\n",
+  "rust-analyzer.updates.askBeforeDownload": false,
+  "rust-analyzer.updates.channel": "nightly",
+  "search.exclude": {
+    "**/target": true
+  },
+  "[json]": {
+    "editor.quickSuggestions": {
+      "strings": true
+    },
+    "editor.suggest.insertMode": "replace",
+    "files.insertFinalNewline": false
+  }
+}

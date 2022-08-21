@@ -1,0 +1,116 @@
+name: Test
+on:
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - "README.md"
+      - ".vscode/**"
+  pull_request:
+    paths-ignore:
+      - "README.md"
+      - ".vscode/**"
+jobs:
+  clippy:
+    name: Clippy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v1
+
+      - name: Install stable toolchain with clippy available
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+          components: clippy
+
+      - name: Run cargo clippy
+        run: cargo clippy -- -D warnings
+
+  rustfmt:
+    name: Format
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v1
+
+      - name: Install stable toolchain with rustfmt available
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+          components: rustfmt
+
+      - name: Run cargo fmt
+        run: cargo fmt --all -- --check
+
+  test:
+    name: test
+    env:
+      # For some builds, we use cross to test on 32-bit and big-endian
+      # systems.
+      CARGO: cargo
+      # When CARGO is set to CROSS, this is set to `--target matrix.target`.
+      TARGET_FLAGS:
+      # When CARGO is set to CROSS, TARGET_DIR includes matrix.target.
+      TARGET_DIR: ./target
+      # Emit backtraces on panics.
+      RUST_BACKTRACE: 1
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        build:
+        - stable
+        - macos
+        - win-msvc
+        include:
+        - build: stable
+          os: ubuntu-18.04
+          rust: stable
+        - build: macos
+          os: macos-latest
+          rust: nightly
+        - build: win-msvc
+          os: windows-2019
+          rust: nightly
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Install Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: ${{ matrix.rust }}
+        profile: minimal
+        override: true
+
+    - name: Use Cross
+      if: matrix.target != ''
+      run: |
+        # FIXME: to work around bugs in latest cross release, install master.
+        # See: https://github.com/rust-embedded/cross/issues/357
+        cargo install --git https://github.com/rust-embedded/cross
+        echo "::set-env name=CARGO::cross"
+        echo "::set-env name=TARGET_FLAGS::--target ${{ matrix.target }}"
+        echo "::set-env name=TARGET_DIR::./target/${{ matrix.target }}"
+    - name: Show command used for Cargo
+      run: |
+        echo "cargo command is: ${{ env.CARGO }}"
+        echo "target flag is: ${{ env.TARGET_FLAGS }}"
+    - uses: actions/cache@v2
+      with:
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+          target
+        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+    - name: Build
+      run: ${{ env.CARGO }} build --verbose --all ${{ env.TARGET_FLAGS }}
+
+    - name: Run tests (with cross)
+      if: matrix.target != ''
+      run: ${{ env.CARGO }} test --verbose --all ${{ env.TARGET_FLAGS }}
+

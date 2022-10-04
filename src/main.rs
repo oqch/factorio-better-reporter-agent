@@ -1,5 +1,6 @@
 use clap::{Arg, Command};
-use notify::{watcher, RecursiveMode, Watcher};
+use notify::RecursiveMode;
+use notify_debouncer_mini::new_debouncer;
 use reqwest::Client;
 use std::collections::HashMap;
 use std::io::BufRead;
@@ -27,9 +28,6 @@ async fn main() {
     let client = reqwest::Client::new();
 
     let (tx, rx) = channel();
-    let mut watcher1 = watcher(tx.clone(), Duration::from_secs(1)).unwrap();
-    let mut watcher2 = watcher(tx.clone(), Duration::from_secs(1)).unwrap();
-    let mut watcher3 = watcher(tx, Duration::from_secs(1)).unwrap();
 
     let files = vec![
         Path::new("./factorio/script-output/better-reporter/general.txt"),
@@ -39,21 +37,27 @@ async fn main() {
         // Path::new("./connection.txt"),
     ];
 
-    watcher1
-        .watch(files[0], RecursiveMode::NonRecursive)
+    let mut debouncer = new_debouncer(Duration::from_secs(2), None, tx).unwrap();
+
+    debouncer
+        .watcher()
+        .watch(files[0], RecursiveMode::Recursive)
         .unwrap();
-    watcher2
-        .watch(files[1], RecursiveMode::NonRecursive)
+    debouncer
+        .watcher()
+        .watch(files[1], RecursiveMode::Recursive)
         .unwrap();
-    watcher3
-        .watch(files[2], RecursiveMode::NonRecursive)
+    debouncer
+        .watcher()
+        .watch(files[2], RecursiveMode::Recursive)
         .unwrap();
 
     loop {
         match rx.recv() {
             Err(e) => eprintln!("watch error: {}", e),
             Ok(event) => match event {
-                notify::DebouncedEvent::Write(pathbuf) => {
+                Ok(events) => {
+                    let pathbuf = &events[0].path;
                     let reader = std::io::BufReader::new(std::fs::File::open(&pathbuf).unwrap());
                     if let Some(text) = reader.lines().last() {
                         match text {

@@ -58,7 +58,7 @@ async fn main() {
             Ok(event) => match event {
                 Ok(events) => {
                     let pathbuf = &events[0].path;
-                    let reader = std::io::BufReader::new(std::fs::File::open(&pathbuf).unwrap());
+                    let reader = std::io::BufReader::new(std::fs::File::open(pathbuf).unwrap());
                     if let Some(text) = reader.lines().last() {
                         match text {
                             Ok(text) => {

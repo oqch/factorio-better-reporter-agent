@@ -41,15 +41,15 @@ async fn main() {
 
     debouncer
         .watcher()
-        .watch(files[0], RecursiveMode::Recursive)
+        .watch(files[0], notify::Recursive)
         .unwrap();
     debouncer
         .watcher()
-        .watch(files[1], RecursiveMode::Recursive)
+        .watch(files[1], notify::Recursive)
         .unwrap();
     debouncer
         .watcher()
-        .watch(files[2], RecursiveMode::Recursive)
+        .watch(files[2], notify::Recursive)
         .unwrap();
 
     loop {

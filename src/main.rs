@@ -37,19 +37,19 @@ async fn main() {
         // Path::new("./connection.txt"),
     ];
 
-    let mut debouncer = new_debouncer(Duration::from_secs(2), None, tx).unwrap();
+    let mut debouncer = new_debouncer(Duration::from_secs(2), tx).unwrap();
 
     debouncer
         .watcher()
-        .watch(files[0], notify::Recursive)
+        .watch(files[0], RecursiveMode::Recursive)
         .unwrap();
     debouncer
         .watcher()
-        .watch(files[1], notify::Recursive)
+        .watch(files[1], RecursiveMode::Recursive)
         .unwrap();
     debouncer
         .watcher()
-        .watch(files[2], notify::Recursive)
+        .watch(files[2], RecursiveMode::Recursive)
         .unwrap();
 
     loop {

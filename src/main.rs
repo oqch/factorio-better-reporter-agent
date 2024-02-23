@@ -37,7 +37,7 @@ async fn main() {
         // Path::new("./connection.txt"),
     ];
 
-    let mut debouncer = new_debouncer(Duration::from_secs(2), None, tx).unwrap();
+    let mut debouncer = new_debouncer(Duration::from_secs(2), tx).unwrap();
 
     debouncer
         .watcher()

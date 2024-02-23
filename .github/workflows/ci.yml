@@ -68,7 +68,7 @@ jobs:
         - win-msvc
         include:
         - build: stable
-          os: ubuntu-18.04
+          os: ubuntu-22.04
           rust: stable
         - build: macos
           os: macos-latest

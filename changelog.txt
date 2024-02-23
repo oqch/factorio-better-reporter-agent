@@ -1,3 +1,8 @@
+### Incoming
+
+- Updated dependencies
+- Build on Ubuntu-22.04
+
 ### 0.2.1
 
 2020.06.11

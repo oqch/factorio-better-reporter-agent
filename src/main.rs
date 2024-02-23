@@ -29,7 +29,7 @@ async fn main() {
 
     let (tx, rx) = channel();
 
-    let files = vec![
+    let files = [
         Path::new("./factorio/script-output/better-reporter/general.txt"),
         Path::new("./factorio/script-output/better-reporter/connection.txt"),
         Path::new("./factorio/script-output/better-reporter/chat.txt"),

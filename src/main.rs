@@ -13,7 +13,7 @@ use better_reporter_agent::{chat, connection, general};
 #[tokio::main]
 async fn main() {
     let matches = Command::new("Better Reporter Agent")
-        .version("0.2.1")
+        .version("0.3.0")
         .author("Oqch")
         .about("Send notifications to Discord")
         .arg(

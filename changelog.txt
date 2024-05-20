@@ -1,7 +1,7 @@
 ### Incoming
 
 - Updated dependencies
-- Build on Ubuntu-22.04
+- Build on Ubuntu-24.04
 
 ### 0.2.1
 

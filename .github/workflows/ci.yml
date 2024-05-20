@@ -63,54 +63,53 @@ jobs:
     strategy:
       matrix:
         build:
-        - stable
-        - macos
-        - win-msvc
+          - stable
+          - macos
+          - win-msvc
         include:
-        - build: stable
-          os: ubuntu-22.04
-          rust: stable
-        - build: macos
-          os: macos-latest
-          rust: nightly
-        - build: win-msvc
-          os: windows-2019
-          rust: nightly
+          - build: stable
+            os: ubuntu-24.04
+            rust: stable
+          - build: macos
+            os: macos-latest
+            rust: nightly
+          - build: win-msvc
+            os: windows-2019
+            rust: nightly
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Install Rust
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: ${{ matrix.rust }}
-        profile: minimal
-        override: true
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ matrix.rust }}
+          profile: minimal
+          override: true
 
-    - name: Use Cross
-      if: matrix.target != ''
-      run: |
-        # FIXME: to work around bugs in latest cross release, install master.
-        # See: https://github.com/rust-embedded/cross/issues/357
-        cargo install --git https://github.com/rust-embedded/cross
-        echo "::set-env name=CARGO::cross"
-        echo "::set-env name=TARGET_FLAGS::--target ${{ matrix.target }}"
-        echo "::set-env name=TARGET_DIR::./target/${{ matrix.target }}"
-    - name: Show command used for Cargo
-      run: |
-        echo "cargo command is: ${{ env.CARGO }}"
-        echo "target flag is: ${{ env.TARGET_FLAGS }}"
-    - uses: actions/cache@v2
-      with:
-        path: |
-          ~/.cargo/registry
-          ~/.cargo/git
-          target
-        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-    - name: Build
-      run: ${{ env.CARGO }} build --verbose --all ${{ env.TARGET_FLAGS }}
+      - name: Use Cross
+        if: matrix.target != ''
+        run: |
+          # FIXME: to work around bugs in latest cross release, install master.
+          # See: https://github.com/rust-embedded/cross/issues/357
+          cargo install --git https://github.com/rust-embedded/cross
+          echo "::set-env name=CARGO::cross"
+          echo "::set-env name=TARGET_FLAGS::--target ${{ matrix.target }}"
+          echo "::set-env name=TARGET_DIR::./target/${{ matrix.target }}"
+      - name: Show command used for Cargo
+        run: |
+          echo "cargo command is: ${{ env.CARGO }}"
+          echo "target flag is: ${{ env.TARGET_FLAGS }}"
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - name: Build
+        run: ${{ env.CARGO }} build --verbose --all ${{ env.TARGET_FLAGS }}
 
-    - name: Run tests (with cross)
-      if: matrix.target != ''
-      run: ${{ env.CARGO }} test --verbose --all ${{ env.TARGET_FLAGS }}
-
+      - name: Run tests (with cross)
+        if: matrix.target != ''
+        run: ${{ env.CARGO }} test --verbose --all ${{ env.TARGET_FLAGS }}

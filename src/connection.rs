@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 use serde_derive::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
@@ -44,9 +46,9 @@ pub struct Join {
     pub player_name: String,
 }
 
-impl ToString for Join {
-    fn to_string(&self) -> String {
-        format!("{}が出勤しました。", self.player_name)
+impl Display for Join {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}が出勤しました。", self.player_name)
     }
 }
 
@@ -56,9 +58,9 @@ pub struct Left {
     pub reason: Reason,
 }
 
-impl ToString for Left {
-    fn to_string(&self) -> String {
-        format!("{}が退勤しました。{}", self.player_name, self.reason)
+impl Display for Left {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}が退勤しました。{}", self.player_name, self.reason)
     }
 }
 

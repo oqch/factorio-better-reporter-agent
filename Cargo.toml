@@ -13,7 +13,7 @@ serde_repr = "0.1.20"
 serde_derive = "1.0.145"
 clap = "4.5.46"
 reqwest = { version = "0.12.23", features = ["json"] }
-tokio = { version = "1.43.0", features = ["full"] }
+tokio = { version = "1.47.1", features = ["full"] }
 
 notify = "8.0.0"
 notify-debouncer-mini = { version = "0.6.0" }
